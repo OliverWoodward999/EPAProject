@@ -1,0 +1,449 @@
+/* Global Styles */
+body {
+    margin: 0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background: #f7f7f7;
+  }
+  
+  /* Login Page Styles */
+  .login-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #7f7fd5, #86a8e7, #91eae4);
+  }
+  
+  .login-page h2 {
+    color: #fadfc0;
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+  }
+  
+  .login-page form {
+    background: rgba(137, 172, 240, 0.9);
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    width: 320px;
+  }
+  
+  .login-page form div {
+    margin-bottom: 15px;
+  }
+  
+  .login-page form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #6a687a;
+    font-weight: 600;
+  }
+  
+  .login-page form input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .login-page form button {
+    width: 100%;
+    padding: 12px;
+    background: #4a90e2;
+    border: none;
+    border-radius: 4px;
+    color: #504c4c;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .login-page form button:hover {
+    background: #357ABD;
+  }
+  
+  .login-page .error {
+    color: #e74c3c;
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  /* Home Page Styles */
+  .home-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+   
+  }
+  
+  .home-page header {
+    background: #86a8e7;
+    color: #312c2c;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .home-page header h1 {
+    margin: 0;
+    font-size: 2rem;
+  }
+  
+  .home-page header nav a {
+    color: #8e4b4b;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+  }
+  
+  .home-page header nav a:hover {
+    color: #527a9f;
+  }
+  
+  .home-page main {
+    flex: 1;
+    padding: 40px;
+    background: linear-gradient(135deg, #adadf6, #86a8e7, #91eae4);
+  }
+  
+  .home-page main h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #312c2c;
+  }
+  
+  .home-page main p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #555;
+  }
+  
+  .home-page footer {
+    background-color: #594d4d;
+    padding: 20px 40px;
+    text-align: center;
+    font-size: 0.9rem;
+    background: #86a8e7;
+  }
+
+  
+
+  /* Navigation Buttons for Home, Profile, and Logout */
+.home-page header nav {
+    display: flex;
+    align-items: center;
+  }
+  
+  .home-page header nav .nav-button {
+    background: none;
+    border: none;
+    padding: 8px 12px;
+    margin-left: 20px;
+    font-size: 1.1rem;
+    text-decoration: none;
+    color: #000000;
+    cursor: pointer;
+    transition: color 0.3s ease, background 0.3s ease;
+  }
+  
+  .home-page header nav .nav-button:hover {
+    color: #527a9f;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+  }
+  
+  /* Ensure button elements look similar to links */
+  .home-page header nav button.nav-button {
+    font-family: inherit;
+  }
+
+
+
+ /* Modal Overlay with fade-in */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Start hidden */
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+/* Optional: Fade-out variant (if you manage unmounting via a "fade-out" class) */
+.modal-overlay.fade-out {
+  animation: fadeOut 0.5s forwards;
+}
+
+/* Modal Content with slide-down & fade-in */
+.modal-content {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  min-width: 300px;
+  transform: translateY(-20px);
+  opacity: 0;
+  animation: slideDown 0.5s forwards;
+}
+
+/* Optional: Fade-out variant for modal content */
+.modal-content.fade-out {
+  animation: slideUp 0.5s forwards;
+}
+
+/* Keyframe for fadeIn */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Keyframe for fadeOut */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Keyframe for slideDown (fade in with a slight slide) */
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Keyframe for slideUp (for fade out) */
+@keyframes slideUp {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+}
+  
+  /* Close Button Styling */
+  .modal-close-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #4a90e2;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .modal-close-btn:hover {
+    background: #357abd;
+  }
+
+  .downtime-log {
+    padding: 20px;
+  }
+  
+  .downtime-log h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .downtime-log form {
+    margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .downtime-log form div {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .downtime-log form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .downtime-log form input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+  }
+  
+  .downtime-log form button {
+    grid-column: span 2;
+    padding: 10px;
+    background: #4a90e2;
+    border: none;
+    color: #fff;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  .downtime-log table {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: separate;
+    border-radius: 10px;
+    border: 2px solid rgb(205, 206, 206);
+    
+  }
+  
+  .downtime-log th,
+  .downtime-log td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+    
+  }
+  
+  .downtime-log th {
+    background: #4a90e2;
+    color: #fff; /* Ensure the text is readable */
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+    
+  }
+  
+  .downtime-log button {
+    margin-right: 5px;
+    padding: 5px 10px;
+    background: #357abd;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .downtime-log button:hover {
+    background: #285e8e;
+  }
+  
+  .error {
+    color: red;
+    margin-bottom: 10px;
+  }
+
+  .register-button {
+    
+    padding: 12px;
+    background: #4a90e2;
+    border: none;
+    border-radius: 4px;
+    color: #504c4c;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .modal-content {
+     background: linear-gradient(135deg, #adadf6, #86a8e7, #91eae4);
+    transition: ease-out 300ms;
+  }
+
+
+  
+  .register-button:hover {
+    transition: ease-in 300ms;
+    background: #357abd;
+}
+ 
+/* Fade-in on mount (already present) */
+.modal-overlay {
+  /* …existing styles… */
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+.modal-content {
+  /* …existing styles… */
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: slideDown 0.5s forwards;
+}
+
+/* Fade-out classes */
+.modal-overlay.fade-out {
+  animation: fadeOut 0.5s forwards;
+}
+.modal-content.fade-out {
+  animation: slideUp 0.5s forwards;
+}
+
+/* Keyframes */
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes fadeOut {
+  from { opacity: 1; } to { opacity: 0; }
+}
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+@keyframes slideUp {
+  from { transform: translateY(0);     opacity: 1; }
+  to   { transform: translateY(-20px); opacity: 0; }
+}
+
+
+.login-page {
+  /* optional: fade-in on mount */
+  animation: fadeIn 1s ease-out forwards;
+}
+
+.login-page.fade-out {
+  animation: fadeOut 1s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-20px); }
+}
+
+/* Fade-in for any element */
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 1s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
