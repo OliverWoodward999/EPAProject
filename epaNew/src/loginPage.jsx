@@ -18,7 +18,7 @@ function LoginPage() {
 
   const API = 'http://localhost:5001';
 
-  // Login handler
+  // Login handlers
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
