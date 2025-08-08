@@ -8,7 +8,7 @@ function LoginPage() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Registration modal state
+  // Registration modal states
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [modalFadeOut, setModalFadeOut] = useState(false);
   const [regUsername, setRegUsername] = useState('');
