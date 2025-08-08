@@ -24,5 +24,5 @@ User.init({
   modelName: 'User',
 });
 
-// Export both the Sequelize instance and the User model
+// Export the Sequelize instance and the User model
 export { sequelize, User };
