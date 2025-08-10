@@ -86,7 +86,7 @@ function LoginPage() {
 
   return (
     <div className="login-page">
-      <h2 className='h2Text'>Downtime Portal</h2>
+      <h2 className='h2Text'>Downtime Portals</h2>
       <h2 className='h2Text'>Login</h2>
       <form onSubmit={handleSubmit}>
         <div>
