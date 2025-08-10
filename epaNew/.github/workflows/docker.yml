@@ -1,0 +1,32 @@
+name: Build and Push Docker
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set image tag
+        id: meta
+        run: |
+          IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/downtime-frontend"
+          TAG="latest"
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Build
+        run: docker build -t ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.tag }} .
+
+      - name: Push
+        run: docker push ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.tag }}
