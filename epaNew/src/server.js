@@ -6,39 +6,51 @@ import { sequelize, User } from './user.js';
 import Downtime from './downtime.js';
 
 const app = express();
-const PORT = 5001;
+
+// allow overriding in prod; default to your public frontend
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || 'http://13.43.111.218:8080';
+const PORT = process.env.PORT || 5001;
 
 app.use(express.json());
-app.use(cors());
 
-// Sync the database and create tables if they don't exist
+// Tight CORS (works cleanly when Nginx proxies /api)
+app.use(cors({
+  origin: FRONTEND_ORIGIN,
+  methods: ['GET','POST','PUT','DELETE'],
+  allowedHeaders: ['Content-Type'],
+}));
+
+// Health check (useful for troubleshooting / uptime checks)
+app.get('/api/health', (_req, res) => res.json({ ok: true }));
+
+// Sync DB
 sequelize.sync()
   .then(() => console.log('Database & tables created!'))
   .catch((err) => console.error('Database sync error:', err));
 
-// Registration endpoint
+// Registration
 app.post('/api/register', async (req, res) => {
   const { username, password } = req.body;
   try {
-    // Hash the password before storing
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ username, password: hashedPassword });
+    await User.create({ username, password: hashedPassword });
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return res.status(409).json({ error: 'Username already exists' });
+    }
     console.error('Registration error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-// Login endpoint
+// Login
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
   try {
-    // Find the user by username
     const user = await User.findOne({ where: { username } });
     if (!user) return res.status(400).json({ error: 'Invalid credentials' });
 
-    // Compare the hashed password with the provided password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
 
@@ -49,7 +61,7 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// Get all downtime entries for a user (username passed as query param)
+// Get all downtime entries for a user
 app.get('/api/downtime', async (req, res) => {
   const { username } = req.query;
   try {
@@ -61,7 +73,7 @@ app.get('/api/downtime', async (req, res) => {
   }
 });
 
-// Add a new downtime entry
+// Add entry
 app.post('/api/downtime', async (req, res) => {
   const { username, clockIn, clockOut, notes } = req.body;
   try {
@@ -73,7 +85,7 @@ app.post('/api/downtime', async (req, res) => {
   }
 });
 
-// Edit an existing downtime entry
+// Update entry
 app.put('/api/downtime/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -87,7 +99,7 @@ app.put('/api/downtime/:id', async (req, res) => {
   }
 });
 
-// Delete a downtime entry
+// Delete entry
 app.delete('/api/downtime/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -101,7 +113,6 @@ app.delete('/api/downtime/:id', async (req, res) => {
   }
 });
 
-
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT} (frontend origin: ${FRONTEND_ORIGIN})`);
 });

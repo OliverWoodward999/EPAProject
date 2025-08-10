@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Use env var in dev if set; otherwise default to same-origin so Nginx proxies /api -> Node
+const API_BASE =
+  (import.meta?.env && import.meta.env.VITE_API_BASE) ||
+  (window.location.hostname === 'localhost' ? 'http://localhost:5001' : '');
+
+const apiUrl = (path) => (API_BASE ? `${API_BASE}${path}` : path);
+
 function LoginPage() {
   // Login state
   const [username, setUsername] = useState('');
@@ -16,24 +23,23 @@ function LoginPage() {
   const [regError, setRegError] = useState('');
   const [regSuccess, setRegSuccess] = useState('');
 
-  const API = 'http://localhost:5001';
-
   // Login handlers
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch(`${API}/api/login`, {
+      const res = await fetch(apiUrl('/api/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       });
+
       if (res.ok) {
         localStorage.setItem('username', username);
         localStorage.setItem('isAuthenticated', 'true');
         navigate('/home');
       } else {
-        const { error: msg } = await res.json();
+        const { error: msg } = await res.json().catch(() => ({}));
         setError(msg || 'Login failed');
       }
     } catch {
@@ -66,17 +72,18 @@ function LoginPage() {
     setRegError('');
     setRegSuccess('');
     try {
-      const res = await fetch(`${API}/api/register`, {
+      const res = await fetch(apiUrl('/api/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: regUsername, password: regPassword }),
       });
+
       if (res.ok) {
         setRegSuccess('User registered successfully!');
         setRegUsername('');
         setRegPassword('');
       } else {
-        const { error: msg } = await res.json();
+        const { error: msg } = await res.json().catch(() => ({}));
         setRegError(msg || 'Registration failed');
       }
     } catch {
@@ -86,8 +93,8 @@ function LoginPage() {
 
   return (
     <div className="login-page">
-      <h2 className='h2Text'>Downtime Portal</h2>
-      <h2 className='h2Text'>Login</h2>
+      <h2 className="h2Text">Downtime Portal</h2>
+      <h2 className="h2Text">Login</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="username">Username:</label>
