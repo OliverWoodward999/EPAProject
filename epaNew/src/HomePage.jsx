@@ -29,7 +29,7 @@ function HomePage() {
   return (
     <div className="home-page">
       <header>
-        <h1>Downtime Portal Pipeline Works!!!!</h1>
+        <h1>Downtime Portal Pipeline Works reeally well !!!!</h1>
         <nav>
           <Link to="/home" className="nav-button">Home</Link>
           <button onClick={openProfileModal} className="nav-button">Profile</button>
