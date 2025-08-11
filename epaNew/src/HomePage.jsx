@@ -38,7 +38,7 @@ function HomePage() {
       </header>
       <main className="fade-in">
         <h2>Welcome, {username}!</h2>
-        <p>This is your personal downtime portal TEST.</p>
+        <p>This is your personal downtime portal.</p>
         {/* Downtime log is embedded in the homepage */}
         <section className="downtime-section">
           <DowntimeLog />
