@@ -87,7 +87,7 @@ function LoginPage() {
   return (
     <div className="login-page">
       <h2 className='h2Text'>Downtime Portal</h2>
-      <h2 className='h2Text'>Login</h2>
+      <h2 className='h2Text'>Login Details</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="username">Username:</label>
