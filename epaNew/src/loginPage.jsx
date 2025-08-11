@@ -16,14 +16,13 @@ function LoginPage() {
   const [regError, setRegError] = useState('');
   const [regSuccess, setRegSuccess] = useState('');
 
-  const API = 'http://localhost:5001';
 
   // Login handlers
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch(`${API}/api/login`, {
+      const res = await fetch(/api/login, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
@@ -66,7 +65,7 @@ function LoginPage() {
     setRegError('');
     setRegSuccess('');
     try {
-      const res = await fetch(`${API}/api/register`, {
+      const res = await fetch(/api/register, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: regUsername, password: regPassword }),

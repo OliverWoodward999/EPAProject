@@ -17,7 +17,7 @@ function DowntimeLog() {
 
   const fetchDowntimeEntries = async () => {
     try {
-      const response = await fetch(`http://localhost:5001/api/downtime?username=${username}`);
+      const response = await fetch(`/api/downtime?username=${username}`);
       const data = await response.json();
       setEntries(data);
     } catch (err) {
@@ -32,14 +32,14 @@ function DowntimeLog() {
       let response;
       if (editingId) {
         // Update an existing entry
-        response = await fetch(`http://localhost:5001/api/downtime/${editingId}`, {
+        response = await fetch(`/api/downtime/${editingId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(entryData)
         });
       } else {
         // Add a new entry
-        response = await fetch('http://localhost:5001/api/downtime', {
+        response = await fetch('/api/downtime', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(entryData)
@@ -71,7 +71,7 @@ function DowntimeLog() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5001/api/downtime/${id}`, {
+      const response = await fetch(`/api/downtime/${id}`, {
         method: 'DELETE'
       });
       if (response.ok) {
