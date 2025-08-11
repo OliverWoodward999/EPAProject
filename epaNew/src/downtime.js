@@ -1,6 +1,6 @@
 // models/Downtime.js
 import { DataTypes } from 'sequelize';
-import { sequelize } from './user.js'; // Adjust the import if your Sequelize instance is elsewhere
+import { sequelize } from './user.js'; // Adjust the import if your Sequelize instance is elsewheree
 
 const Downtime = sequelize.define('Downtime', {
   id: {
