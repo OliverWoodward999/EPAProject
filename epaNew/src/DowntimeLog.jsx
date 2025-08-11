@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { apiUrl } from './api';
 
 function DowntimeLog() {
   const [entries, setEntries] = useState([]);
@@ -9,25 +8,18 @@ function DowntimeLog() {
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState('');
 
-  const username = localStorage.getItem('username') || '';
+  // Assume the username is stored in localStorage (set during login)
+  const username = localStorage.getItem('username');
 
   useEffect(() => {
-    if (!username) {
-      setError('You are not logged in.');
-      return;
-    }
     fetchDowntimeEntries();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [username]);
+  }, []);
 
   const fetchDowntimeEntries = async () => {
     try {
-      const res = await fetch(
-        apiUrl(`/api/downtime?username=${encodeURIComponent(username)}`)
-      );
-      if (!res.ok) throw new Error('Fetch failed');
-      const data = await res.json();
-      setEntries(Array.isArray(data) ? data : []);
+      const response = await fetch(`http://localhost:5001/api/downtime?username=${username}`);
+      const data = await response.json();
+      setEntries(data);
     } catch (err) {
       setError('Error fetching downtime entries');
     }
@@ -35,56 +27,64 @@ function DowntimeLog() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     const entryData = { username, clockIn, clockOut, notes };
-
     try {
-      const url = editingId
-        ? apiUrl(`/api/downtime/${editingId}`)
-        : apiUrl('/api/downtime');
-      const method = editingId ? 'PUT' : 'POST';
-
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(entryData),
-      });
-
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || 'Error saving entry');
+      let response;
+      if (editingId) {
+        // Update an existing entry
+        response = await fetch(`http://localhost:5001/api/downtime/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(entryData)
+        });
+      } else {
+        // Add a new entry
+        response = await fetch('http://localhost:5001/api/downtime', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(entryData)
+        });
       }
-
-      // clear form + refresh
-      setClockIn('');
-      setClockOut('');
-      setNotes('');
-      setEditingId(null);
-      fetchDowntimeEntries();
+      if (response.ok) {
+        // Clear the form fields and reset editing state
+        setClockIn('');
+        setClockOut('');
+        setNotes('');
+        setEditingId(null);
+        fetchDowntimeEntries();
+      } else {
+        const data = await response.json();
+        setError(data.error || 'Error saving entry');
+      }
     } catch (err) {
-      setError(err.message || 'Error saving entry');
+      setError('Error saving entry');
     }
   };
 
   const handleEdit = (entry) => {
     setEditingId(entry.id);
-    setClockIn(entry.clockIn?.slice(0, 16) || '');
+    // Format for datetime-local input: take first 16 characters of ISO string
+    setClockIn(entry.clockIn.slice(0, 16));
     setClockOut(entry.clockOut ? entry.clockOut.slice(0, 16) : '');
     setNotes(entry.notes || '');
   };
 
   const handleDelete = async (id) => {
-    setError('');
     try {
-      const res = await fetch(apiUrl(`/api/downtime/${id}`), { method: 'DELETE' });
-      if (!res.ok) throw new Error('Error deleting entry');
-      fetchDowntimeEntries();
+      const response = await fetch(`http://localhost:5001/api/downtime/${id}`, {
+        method: 'DELETE'
+      });
+      if (response.ok) {
+        fetchDowntimeEntries();
+      } else {
+        setError('Error deleting entry');
+      }
     } catch (err) {
-      setError(err.message || 'Error deleting entry');
+      setError('Error deleting entry');
     }
   };
 
-  // total downtime display
+  // <-- Place the downtime total calculation here, before the return statement -->
   const totalMillis = entries.reduce((total, entry) => {
     if (entry.clockOut) {
       return total + (new Date(entry.clockOut) - new Date(entry.clockIn));
@@ -93,55 +93,59 @@ function DowntimeLog() {
   }, 0);
 
   const totalMinutes = Math.floor(totalMillis / 60000);
-  const totalTimeDisplay =
-    totalMinutes >= 1440
-      ? (() => {
-          const days = Math.floor(totalMinutes / 1440);
-          const remaining = totalMinutes % 1440;
-          const hours = Math.floor(remaining / 60);
-          const minutes = remaining % 60;
-          return `${days}d ${hours}h ${minutes}m`;
-        })()
-      : `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`;
+  let totalTimeDisplay = '';
+
+  if (totalMinutes >= 1440) { // 1440 minutes = 24 hours
+    const days = Math.floor(totalMinutes / 1440);
+    const remainingMinutes = totalMinutes % 1440;
+    const hours = Math.floor(remainingMinutes / 60);
+    const minutes = remainingMinutes % 60;
+    totalTimeDisplay = `${days}d ${hours}h ${minutes}m`;
+  } else {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    totalTimeDisplay = `${hours}h ${minutes}m`;
+  }
 
   return (
-    <div className="downtime-log fade-in">
+    <div className="downtime-log">
+   <div className="downtime-log fade-in">
       <h2>Downtime Log</h2>
       {error && <p className="error">{error}</p>}
-
+      
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="clockIn">Start Date and Time:</label>
-          <input
-            type="datetime-local"
-            id="clockIn"
+          <input 
+            type="datetime-local" 
+            id="clockIn" 
             value={clockIn}
             onChange={(e) => setClockIn(e.target.value)}
-            required
+            required 
           />
         </div>
         <div>
-          <label htmlFor="clockOut">End Date and Time:</label>
-          <input
-            type="datetime-local"
-            id="clockOut"
+          <label htmlFor="clockOut">End Date and Time: </label>
+          <input 
+            type="datetime-local" 
+            id="clockOut" 
             value={clockOut}
             onChange={(e) => setClockOut(e.target.value)}
-            required
+            required 
           />
         </div>
         <div>
           <label htmlFor="notes">Notes:</label>
-          <input
-            type="text"
-            id="notes"
+          <input 
+            type="text" 
+            id="notes" 
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
           />
         </div>
         <button type="submit">{editingId ? 'Update Entry' : 'Add Entry'}</button>
       </form>
-
+      
       <table>
         <thead>
           <tr>
@@ -153,39 +157,37 @@ function DowntimeLog() {
           </tr>
         </thead>
         <tbody>
-          {entries.map((entry) => (
+          {entries.map(entry => (
             <tr key={entry.id}>
               <td>{new Date(entry.clockIn).toLocaleString()}</td>
               <td>{entry.clockOut ? new Date(entry.clockOut).toLocaleString() : 'N/A'}</td>
               <td>{entry.clockOut ? formatLength(entry.clockIn, entry.clockOut) : 'N/A'}</td>
               <td>{entry.notes}</td>
               <td>
-                <button type="button" onClick={() => handleEdit(entry)}>
-                  Edit
-                </button>
-                <button type="button" onClick={() => handleDelete(entry.id)}>
-                  Delete
-                </button>
+                <button onClick={() => handleEdit(entry)}>Edit</button>
+                <button onClick={() => handleDelete(entry.id)}>Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
+      
       <div className="downtime-total">
         <h3>Total Downtime: {totalTimeDisplay}</h3>
       </div>
     </div>
+    </div>
   );
 }
 
+// Helper function to format the length for each entry
 const formatLength = (clockIn, clockOut) => {
   if (!clockOut) return 'N/A';
   const diffMillis = new Date(clockOut) - new Date(clockIn);
   const diffMinutes = Math.floor(diffMillis / 60000);
-  const h = Math.floor(diffMinutes / 60);
-  const m = diffMinutes % 60;
-  return h > 0 ? `${h}h ${m}m` : `${m}m`;
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffRemainingMinutes = diffMinutes % 60;
+  return diffHours > 0 ? `${diffHours}h ${diffRemainingMinutes}m` : `${diffRemainingMinutes}m`;
 };
 
 export default DowntimeLog;
