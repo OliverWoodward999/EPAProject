@@ -40,7 +40,7 @@ function LoginPage() {
     }
   };
 
-  // Open register modal
+  // Open register modals
   const openRegisterModal = () => {
     setRegUsername('');
     setRegPassword('');
