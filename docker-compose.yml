@@ -1,0 +1,32 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: src/backend.Dockerfile
+    container_name: downtime-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=5001
+      # If you later modify Sequelize to read this:
+      # - SQLITE_PATH=/data/database.sqlite
+    # To persist the SQLite DB later, uncomment these:
+    # volumes:
+    #   - backend_data:/data
+    expose:
+      - "5001"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: src/frontend.Dockerfile
+    container_name: downtime-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"  # reach the site at http://<EC2>:8080
+
+# Uncomment if you enable persistence above
+# volumes:
+#   backend_data:
