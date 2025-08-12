@@ -57,7 +57,7 @@ function LoginPage() {
     setTimeout(() => {
       setIsRegisterModalOpen(false);
       setModalFadeOut(false);
-    }, 500); // match your CSS animation duration
+    }, 500); 
   };
 
   // Registration handler

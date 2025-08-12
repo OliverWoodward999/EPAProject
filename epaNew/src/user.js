@@ -4,7 +4,7 @@ import { Sequelize, DataTypes, Model } from 'sequelize';
 // Initialize Sequelize to use SQLite
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: './database.sqlite', // This file will be created in your project folder
+  storage: './database.sqlite',
 });
 
 class User extends Model {}

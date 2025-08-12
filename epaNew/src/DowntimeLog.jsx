@@ -8,7 +8,7 @@ function DowntimeLog() {
   const [editingId, setEditingId] = useState(null);
   const [error, setError] = useState('');
 
-  // Assume the username is stored in localStorage (set during login)
+ 
   const username = localStorage.getItem('username');
 
   useEffect(() => {
@@ -84,7 +84,7 @@ function DowntimeLog() {
     }
   };
 
-  // <-- Place the downtime total calculation here, before the return statement -->
+ 
   const totalMillis = entries.reduce((total, entry) => {
     if (entry.clockOut) {
       return total + (new Date(entry.clockOut) - new Date(entry.clockIn));
