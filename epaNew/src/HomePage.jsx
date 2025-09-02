@@ -45,7 +45,7 @@ function HomePage() {
         </section>
       </main>
       <footer>
-        <p>&copy; 2025 Oliver Woodward's Downtime Portal.</p>
+        <p>&copy; 2025 Oliver Woodward's Downtime Portal...</p>
       </footer>
 
       {isProfileModalOpen && (
